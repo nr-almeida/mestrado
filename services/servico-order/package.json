@@ -1,0 +1,34 @@
+{
+  "name": "servico-order",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/infrastructure/http/server.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/infrastructure/http/server.js",
+    "dev": "ts-node-dev --respawn --transpile-only src/infrastructure/http/server.ts",
+    "test": "jest --runInBand",
+    "test:coverage": "jest --coverage --runInBand"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "ServicoOrder — microsserviço Order Management (core domain), primeira implementação do estudo de caso ProMoBD/FTGO da dissertação.",
+  "dependencies": {
+    "express": "^5.2.1",
+    "uuid": "^14.0.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^26.2.0",
+    "@types/supertest": "^7.2.1",
+    "@types/uuid": "^10.0.0",
+    "jest": "^30.4.2",
+    "supertest": "^7.2.2",
+    "ts-jest": "^29.4.12",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.6.3"
+  }
+}

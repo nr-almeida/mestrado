@@ -1,0 +1,40 @@
+name: CI - servico-order
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'services/servico-order/**'
+      - '.github/workflows/ci.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'services/servico-order/**'
+
+jobs:
+  test:
+    name: Build & testes (ServicoOrder)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: services/servico-order
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: services/servico-order/package-lock.json
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Checagem de tipos
+        run: npx tsc --noEmit -p tsconfig.json
+
+      - name: Rodar testes (unitários + integração)
+        run: npm test -- --ci --coverage
+
+      - name: Build de produção
+        run: npm run build
