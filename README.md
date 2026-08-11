@@ -9,22 +9,38 @@ microsserviço extraído do monólito FTGO:
 
 ```
 services/
-  servico-order/   # implementado — core domain (Order Management), EC-M4.3
+  servico-order/       # implementado — core domain (Order Management), EC-M4.3
+  servico-accounting/  # implementado — autorização de crédito (subdomínio de suporte), EC-M4.3
+scripts/
+  demo-order-accounting-flow.sh   # prova a integração real entre os dois serviços via HTTP
 ```
 
 ## Status
 
-Por enquanto, apenas o `ServicoOrder` foi implementado — é o *core
-domain* do FTGO, conforme identificado na EC-M2.1 e priorizado na
-EC-M3.1. Ver [`services/servico-order/README.md`](services/servico-order/README.md)
-para arquitetura, como rodar e como comprovar que ele funciona
-(testes automatizados + demonstração via `curl`).
+Dois dos seis microsserviços definidos na EC-M4.1 estão implementados:
 
-Os demais candidatos a microsserviço definidos na EC-M4.1
-(`ServicoAccounting`, `ServicoKitchen`, `ServicoDelivery`,
-`ServicoRestaurant`, `ServicoConsumer`) ainda não foram implementados.
+- **`ServicoOrder`** — *core domain* do FTGO (EC-M2.1), API síncrona
+  `POST/GET /orders`. Ver [`services/servico-order/README.md`](services/servico-order/README.md).
+- **`ServicoAccounting`** — subdomínio de suporte, primeiro serviço da
+  Onda 1 do plano de migração (EC-M5.1), reage a `OrderCreated`/`OrderCancelled`
+  e publica `CreditReserved`/`CreditRejected`. Ver [`services/servico-accounting/README.md`](services/servico-accounting/README.md).
+
+Os dois já foram testados **em conjunto**, como processos HTTP
+independentes conversando via eventos (sem broker real ainda) — rode
+`./scripts/demo-order-accounting-flow.sh` da raiz do repositório para
+ver o fluxo completo: criação do pedido → autorização de crédito →
+aprovação ou cancelamento do pedido, em dois cenários (aprovado e
+recusado).
+
+Os demais candidatos a microsserviço (`ServicoKitchen`,
+`ServicoDelivery`, `ServicoRestaurant`, `ServicoConsumer`) ainda não
+foram implementados.
 
 ## CI
 
-Cada push/PR que altera `services/servico-order/**` roda a suíte de
-testes automaticamente (`.github/workflows/ci.yml`).
+Cada push/PR roda, via `.github/workflows/ci.yml`:
+
+1. Testes + build de cada serviço, em paralelo (matriz `servico-order` / `servico-accounting`);
+2. O script de integração cruzada (`integration-demo`), provando que
+   os dois serviços realmente conversam corretamente antes de
+   considerar o pipeline verde.
