@@ -1,0 +1,31 @@
+name: CI - servico-order (Java)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'services-java/servico-order/**'
+      - '.github/workflows/ci-java.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'services-java/servico-order/**'
+
+jobs:
+  build-and-test:
+    name: Build & testes (ServicoOrder Java)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: services-java/servico-order
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
+      - name: Build e testes (Maven)
+        run: mvn -B clean verify
